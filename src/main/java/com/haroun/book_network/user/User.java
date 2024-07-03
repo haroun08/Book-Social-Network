@@ -92,7 +92,7 @@ public class User implements UserDetails, Principal {
         return UserDetails.super.isEnabled();
     }
 
-    private String getFullName(){
+    public String getFullName(){
         return firstname + " " + lastname;
     }
 }
