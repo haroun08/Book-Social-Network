@@ -1,6 +1,9 @@
 package com.haroun.book_network.book;
 
 import com.haroun.book_network.common.BaseEntity;
+import com.haroun.book_network.feedback.Feedback;
+import com.haroun.book_network.history.BookTransactionHistory;
+import com.haroun.book_network.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +12,7 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.util.List;
 
 
 @Getter
@@ -28,5 +32,13 @@ public class Book extends BaseEntity {
     private  boolean archived;
     private boolean shareable;
 
+    @ManyToOne
+    @JoinColumn(name="owner_id")
+    private User owner;
 
+    @OneToMany(mappedBy = "book")
+    private List<Feedback> feedbacks;
+
+    @OneToMany(mappedBy = "book")
+    private List<BookTransactionHistory> histories;
 }
