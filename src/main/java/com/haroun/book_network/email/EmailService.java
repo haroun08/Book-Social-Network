@@ -33,7 +33,7 @@ public class EmailService {
             String confirmationUrl,
             String activationCode,
             String subject
-    ) throws MessagingException, MessagingException {
+    ) throws MessagingException {
         String templateName;
         if (emailTemplate == null) {
             templateName = "confirm-email";
@@ -54,7 +54,7 @@ public class EmailService {
         Context context = new Context();
         context.setVariables(properties);
 
-        helper.setFrom("contact@test.com");
+        helper.setFrom("contact@aliboucoding.com");
         helper.setTo(to);
         helper.setSubject(subject);
 
