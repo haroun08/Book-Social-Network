@@ -1,5 +1,6 @@
 package com.haroun.book_network.book;
 
+import com.haroun.book_network.file.FileUtils;
 import com.haroun.book_network.history.BookTransactionHistory;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +29,7 @@ public class BookMapper {
                 .archived(book.isArchived())
                 .shareable(book.isShareable())
                 .owner(book.getOwner().getFullName())
-                // todo implement this later
+                .cover(FileUtils.readFileFromLocation(book.getBookCover()))
                 .build();
     }
 
