@@ -13,8 +13,8 @@ public class FeedbackMapper {
                 .comment(request.comment())
                 .book(Book.builder()
                         .id(request.bookId())
-                        .shareable(false)
-                        .archived(false)
+                        .shareable(false) // Not required and has no impact :: just to satisfy lombok
+                        .archived(false) // Not required and has no impact :: just to satisfy lombok
                         .build()
                 )
                 .build();

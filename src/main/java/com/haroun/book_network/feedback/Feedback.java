@@ -10,19 +10,18 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 
-@Entity
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @SuperBuilder
-public class Feedback  extends BaseEntity {
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+public class Feedback extends BaseEntity {
 
+    @Column
     private Double note;
     private String comment;
-
     @ManyToOne
     @JoinColumn(name = "book_id")
     private Book book;
-
 }
