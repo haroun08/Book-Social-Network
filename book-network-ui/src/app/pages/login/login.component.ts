@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import {AuthenticationRequest} from "../../services/models/authentication-request";
-import {NgForOf, NgIf} from "@angular/common";
 import {FormsModule} from "@angular/forms";
 import {AuthenticationService} from "../../services/services/authentication.service";
 import {Router} from "@angular/router";
+import {TokenService} from "../../services/token/token.service";
+import {NgForOf, NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-login',
@@ -11,7 +12,8 @@ import {Router} from "@angular/router";
   imports: [
     NgIf,
     NgForOf,
-    FormsModule
+    FormsModule,
+    NgForOf
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
@@ -23,7 +25,7 @@ export class LoginComponent {
   constructor(
     private router : Router,
     private authService : AuthenticationService,
-    // another service
+    private tokenService: TokenService
   ) {
 
   }
@@ -32,13 +34,19 @@ export class LoginComponent {
     this.errorMsg = [];
     this.authService.authenticate({
       body: this.authRequest
-    }).subscribe(
-      {
-        next: () => {
+    }).subscribe({
+        next: (res) => {
+          this.tokenService.token = res.token as string;
             this.router.navigate(['books']);
           },
         error:(err) => {
           console.log(err);
+          if(err.error.validationErrors){
+            this.errorMsg = err.error.validationErrors;
+          }
+          else{
+            this.errorMsg.push(err.error.errorMsg);
+          }
         }
       });
   }
