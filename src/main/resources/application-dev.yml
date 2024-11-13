@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/book_social_network
     username: postgres
-    password: SQL_2023test
+    password: Test
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -16,8 +16,8 @@ spring:
   mail:
     host: localhost
     port: 1025
-    username: ali
-    password: ali
+    username: haroun
+    password: brh
     properties:
       mail:
         smtp:
