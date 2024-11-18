@@ -60,6 +60,7 @@ public class BookService {
     }
 
 
+
     public PageResponse<BookResponse> findAllBooksByOwner(int page, int size, Authentication connectedUser) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
         Page<Book> books = bookRepository.findAll(withOwnerId(Integer.valueOf(connectedUser.getName())), pageable);

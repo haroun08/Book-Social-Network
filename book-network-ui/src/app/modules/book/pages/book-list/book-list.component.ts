@@ -27,12 +27,14 @@ export class BookListComponent implements OnInit {
   }
 
   private findAllBooks() {
+    console.log('Fetching books with page:', this.page, 'size:', this.size);
     this.bookService.findAllBooks({
       page: this.page,
       size: this.size
     }).subscribe({
       next: (books) => {
-        if (books && books.content && books.content.length > 0) {
+        console.log('Books response:', books);
+        if (books && books.content && books.content.length >= 0) {
           this.bookResponse = books;
         } else {
           console.warn('No books found');
@@ -45,25 +47,30 @@ export class BookListComponent implements OnInit {
     });
   }
 
+
   goToFirstPage() {
     this.page = 0;
     this.findAllBooks();
   }
 
   goToPreviousPage() {
-
+    this.page--;
+    this.findAllBooks();
   }
 
-  goToPage(index: number) {
-
+  goToPage(page: number) {
+    this.page =page;
+    this.findAllBooks();
   }
 
   goToNextPage() {
-
+    this.page++;
+    this.findAllBooks();
   }
 
   goToLastPage() {
-
+    this.page = this.bookResponse.totalPages as number -1;
+    this.findAllBooks();
   }
   get isLastPage() : boolean{
     return this.page == this.bookResponse.totalPages as number -1 ;
