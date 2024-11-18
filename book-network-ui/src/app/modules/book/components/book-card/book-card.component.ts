@@ -1,11 +1,17 @@
 import {Component, Input, Output} from '@angular/core';
 import {BookResponse} from "../../../../services/models/book-response";
 import EventEmitter from "node:events";
+import {NgForOf, NgIf} from "@angular/common";
+import {RatingComponent} from "../rating/rating.component";
 
 @Component({
   selector: 'app-book-card',
   standalone: true,
-  imports: [],
+  imports: [
+    NgForOf,
+    NgIf,
+    RatingComponent
+  ],
   templateUrl: './book-card.component.html',
   styleUrl: './book-card.component.scss'
 })
@@ -41,5 +47,45 @@ export class BookCardComponent  {
   }
 
 
+  // @ts-ignore
+  @Output() private share: EventEmitter<BookResponse> = new EventEmitter<BookResponse>();
+  // @ts-ignore
+  @Output() private archive: EventEmitter<BookResponse> = new EventEmitter<BookResponse>();
+  // @ts-ignore
+  @Output() private addToWaitingList: EventEmitter<BookResponse> = new EventEmitter<BookResponse>();
+  // @ts-ignore
+  @Output() private borrow: EventEmitter<BookResponse> = new EventEmitter<BookResponse>();
+  // @ts-ignore
+  @Output() private edit: EventEmitter<BookResponse> = new EventEmitter<BookResponse>();
+  // @ts-ignore
+  @Output() private details: EventEmitter<BookResponse> = new EventEmitter<BookResponse>();
+  onShare() {
+    // @ts-ignore
+    this.share.emit(this._book);
+  }
 
+  onArchive() {
+    // @ts-ignore
+    this.archive.emit(this._book);
+  }
+
+  onAddToWaitingList() {
+    // @ts-ignore
+    this.addToWaitingList.emit(this._book);
+  }
+
+  onBorrow() {
+    // @ts-ignore
+    this.borrow.emit(this._book);
+  }
+
+  onEdit() {
+    // @ts-ignore
+    this.edit.emit(this._book);
+  }
+
+  onShowDetails() {
+    // @ts-ignore
+    this.details.emit(this._book);
+  }
 }

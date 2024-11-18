@@ -10,7 +10,7 @@ import { BookCardComponent } from '../../components/book-card/book-card.componen
   standalone: true,
   imports: [NgForOf, BookCardComponent],
   templateUrl: './book-list.component.html',
-  styleUrls: ['./book-list.component.scss'] // Fixed typo: styleUrl -> styleUrls
+  styleUrls: ['./book-list.component.scss']
 })
 export class BookListComponent implements OnInit {
   bookResponse: PageResponseBookResponse = {};

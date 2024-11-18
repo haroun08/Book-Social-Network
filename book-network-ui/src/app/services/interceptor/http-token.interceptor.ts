@@ -4,7 +4,6 @@ import { TokenService } from '../token/token.service';
 
 export const httpTokenInterceptor: HttpInterceptorFn = (req, next) => {
   const tokenService = inject(TokenService);
-
   const token = tokenService.token;
 
   if (token) {
