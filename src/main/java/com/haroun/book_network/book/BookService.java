@@ -44,7 +44,7 @@ public class BookService {
     public PageResponse<BookResponse> findAllBooks(int page, int size, Authentication connectedUser) {
         User user = ((User) connectedUser.getPrincipal());
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-        Page<Book> books = bookRepository.findAllDisplayableBooks(pageable, connectedUser.getName());
+        Page<Book> books = bookRepository.findAllDisplayableBooks(pageable, user.getId());
         List<BookResponse> booksResponse = books.stream()
                 .map(bookMapper::toBookResponse)
                 .toList();
@@ -165,7 +165,7 @@ public class BookService {
                 .orElseThrow(() -> new EntityNotFoundException("No book found with the ID::" + bookId));
         if(book.isArchived() || !book.isShareable()){
             throw new OperationNotPermittedException("The requested book cannot be borrowed since it is archived or not shareable");
-        }
+        }  
         User user = ((User) connectedUser.getPrincipal());
         if (Objects.equals(book.getCreatedBy(), user.getId())) {
             throw new OperationNotPermittedException("You cannot borrow or return your own book");

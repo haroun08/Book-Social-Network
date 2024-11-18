@@ -45,4 +45,28 @@ export class BookListComponent implements OnInit {
     });
   }
 
+  goToFirstPage() {
+    this.page = 0;
+    this.findAllBooks();
+  }
+
+  goToPreviousPage() {
+
+  }
+
+  goToPage(index: number) {
+
+  }
+
+  goToNextPage() {
+
+  }
+
+  goToLastPage() {
+
+  }
+  get isLastPage() : boolean{
+    return this.page == this.bookResponse.totalPages as number -1 ;
+  }
+
 }
