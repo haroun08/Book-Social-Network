@@ -16,6 +16,7 @@ import {RatingComponent} from "../rating/rating.component";
   styleUrl: './book-card.component.scss'
 })
 export class BookCardComponent  {
+
   private _book: BookResponse = {};
   private _manage = false;
   private _bookCover: string | undefined;
@@ -46,7 +47,6 @@ export class BookCardComponent  {
     this._manage = value;
   }
 
-
   // @ts-ignore
   @Output() private share: EventEmitter<BookResponse> = new EventEmitter<BookResponse>();
   // @ts-ignore
@@ -59,6 +59,7 @@ export class BookCardComponent  {
   @Output() private edit: EventEmitter<BookResponse> = new EventEmitter<BookResponse>();
   // @ts-ignore
   @Output() private details: EventEmitter<BookResponse> = new EventEmitter<BookResponse>();
+
   onShare() {
     // @ts-ignore
     this.share.emit(this._book);
