@@ -17,7 +17,7 @@ export class BookListComponent implements OnInit {
   bookResponse: PageResponseBookResponse = {};
   page = 0;
   size = 5;
-  message = 'string';
+  message = '';
   level = 'Success';
 
   constructor(

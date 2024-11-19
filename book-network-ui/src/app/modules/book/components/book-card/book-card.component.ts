@@ -1,6 +1,6 @@
 import {Component, Input, Output} from '@angular/core';
 import {BookResponse} from "../../../../services/models/book-response";
-import EventEmitter from "node:events";
+import { EventEmitter } from '@angular/core';
 import {NgForOf, NgIf} from "@angular/common";
 import {RatingComponent} from "../rating/rating.component";
 
