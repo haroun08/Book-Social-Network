@@ -17,39 +17,39 @@ export class BookListComponent implements OnInit {
   bookResponse: PageResponseBookResponse = {};
   page = 0;
   size = 5;
+  pages: any = [];
   message = '';
-  level = 'Success';
+  level: 'success' |'error' = 'success';
 
   constructor(
     private bookService: BookService,
     private router: Router
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.findAllBooks();
   }
 
   private findAllBooks() {
-    console.log('Fetching books with page:', this.page, 'size:', this.size);
     this.bookService.findAllBooks({
       page: this.page,
       size: this.size
-    }).subscribe({
-      next: (books) => {
-        console.log('Books response:', books);
-        if (books && books.content && books.content.length >= 0) {
+    })
+      .subscribe({
+        next: (books) => {
           this.bookResponse = books;
-        } else {
-          console.warn('No books found');
-          this.bookResponse = {}; // or set to a default empty object
+          this.pages = Array(this.bookResponse.totalPages)
+            .fill(0)
+            .map((x, i) => i);
         }
-      },
-      error: (err) => {
-        console.error('Error fetching books:', err);
-      }
-    });
+      });
   }
 
+  gotToPage(page: number) {
+    this.page = page;
+    this.findAllBooks();
+  }
 
   goToFirstPage() {
     this.page = 0;
@@ -57,12 +57,12 @@ export class BookListComponent implements OnInit {
   }
 
   goToPreviousPage() {
-    this.page--;
+    this.page --;
     this.findAllBooks();
   }
 
-  goToPage(page: number) {
-    this.page =page;
+  goToLastPage() {
+    this.page = this.bookResponse.totalPages as number - 1;
     this.findAllBooks();
   }
 
@@ -71,28 +71,33 @@ export class BookListComponent implements OnInit {
     this.findAllBooks();
   }
 
-  goToLastPage() {
-    this.page = this.bookResponse.totalPages as number -1;
-    this.findAllBooks();
-  }
-  get isLastPage() : boolean{
-    return this.page == this.bookResponse.totalPages as number -1 ;
+  get isLastPage() {
+    return this.page === this.bookResponse.totalPages as number - 1;
   }
 
-   borrowBook(book: BookResponse) {
+  borrowBook(book: BookResponse) {
     this.message = '';
+    this.level = 'success';
     this.bookService.borrowBook({
       'book-id': book.id as number
     }).subscribe({
       next: () => {
         this.level = 'success';
-        this.message  = 'Book Successfully added to your list'
+        this.message = 'Book successfully added to your list';
       },
-      error:(err) => {
+      error: (err) => {
         console.log(err);
         this.level = 'error';
         this.message = err.error.error;
       }
     });
+  }
+
+  displayBookDetails(book: BookResponse) {
+    this.router.navigate(['books', 'details', book.id]);
+  }
+
+  goToPage(pageIndex: number) {
+
   }
 }

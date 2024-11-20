@@ -82,8 +82,11 @@ public class BookService {
     }
 
     public PageResponse<BorrowedBookResponse> findAllBorrowedBooks(int page, int size, Authentication connectedUser) {
+        User user = ((User) connectedUser.getPrincipal());
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-        Page<BookTransactionHistory> allBorrowedBooks = bookTransactionHistoryRepository.findAllBorrowedBooks(pageable, Integer.valueOf(connectedUser.getName()));
+
+        Page<BookTransactionHistory> allBorrowedBooks = bookTransactionHistoryRepository.findAllBorrowedBooks(pageable, user.getId());
         List<BorrowedBookResponse> booksResponse = allBorrowedBooks.stream()
                 .map(bookMapper::toBorrowedBookResponse)
                 .toList();
@@ -100,8 +103,10 @@ public class BookService {
     }
 
     public PageResponse<BorrowedBookResponse> findAllReturnedBooks(int page, int size, Authentication connectedUser) {
+        User user = ((User) connectedUser.getPrincipal());
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-        Page<BookTransactionHistory> allBorrowedBooks = bookTransactionHistoryRepository.findAllReturnedBooks(pageable, Integer.valueOf(connectedUser.getName()));
+        Page<BookTransactionHistory> allBorrowedBooks = bookTransactionHistoryRepository.findAllReturnedBooks(pageable, user.getId());
         List<BorrowedBookResponse> booksResponse = allBorrowedBooks.stream()
                 .map(bookMapper::toBorrowedBookResponse)
                 .toList();
@@ -120,7 +125,9 @@ public class BookService {
     public Integer updateShareableStatus(Integer bookId, Authentication connectedUser) {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new EntityNotFoundException("No book found with ID:: " + bookId));
-        if (!Objects.equals(book.getCreatedBy(), connectedUser.getName())) {
+        User user = ((User) connectedUser.getPrincipal());
+
+        if (!Objects.equals(book.getOwner().getId(), user.getId())) {
             throw new OperationNotPermittedException("You cannot update others books shareable status");
         }
         book.setShareable(!book.isShareable());
@@ -132,27 +139,29 @@ public class BookService {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new EntityNotFoundException("No book found with ID:: " + bookId));
         User user = ((User) connectedUser.getPrincipal());
-        if (!Objects.equals(book.getCreatedBy(), user.getId())) {
-            throw new OperationNotPermittedException("You cannot update others books archived status");
+
+        if (!Objects.equals(book.getOwner().getId(), user.getId())) {
+            throw new OperationNotPermittedException("You cannot update others  books archived status");
         }
-        book.setArchived(!book.isArchived());
+        book.setShareable(!book.isShareable());
         bookRepository.save(book);
         return bookId;
     }
 
 
     public Integer borrowBook(Integer bookId, Authentication connectedUser) {
+
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new EntityNotFoundException("No book found with the ID::" + bookId));
         if(book.isArchived() || !book.isShareable()){
             throw new OperationNotPermittedException("The requested book cannot be borrowed since it is archived or not shareable");
         }
         User user = ((User) connectedUser.getPrincipal());
-        if (Objects.equals(book.getCreatedBy(), user.getId())) {
+        if (Objects.equals(book.getOwner().getId(), user.getId())) {
             throw new OperationNotPermittedException("You cannot borrow your own book");
         }
-        final boolean isAlreadyBorrow = bookTransactionHistoryRepository.isAlreadyBorrowedByUser(bookId,user.getId());
-        if(isAlreadyBorrow) {
+        final boolean isAlreadyBorrowed = bookTransactionHistoryRepository.isAlreadyBorrowedByUser(bookId,user.getId());
+        if(isAlreadyBorrowed) {
             throw new OperationNotPermittedException("The requested book is already borrowed");
         }
         BookTransactionHistory bookTransactionHistory = BookTransactionHistory.builder()
@@ -174,7 +183,7 @@ public class BookService {
         if (Objects.equals(book.getCreatedBy(), user.getId())) {
             throw new OperationNotPermittedException("You cannot borrow or return your own book");
         }
-        BookTransactionHistory bookTransactionHistory = bookTransactionHistoryRepository.findByBookIdAndUserId(book,user.getId())
+        BookTransactionHistory bookTransactionHistory = bookTransactionHistoryRepository.findByBookIdAndUserId(bookId,user.getId())
                 .orElseThrow(() -> new OperationNotPermittedException("You did not borrow this book"));
         bookTransactionHistory.setReturned(true);
         return bookTransactionHistoryRepository.save(bookTransactionHistory).getId();
@@ -188,10 +197,10 @@ public class BookService {
             throw new OperationNotPermittedException("The requested book cannot be borrowed since it is archived or not shareable");
         }
         User user = ((User) connectedUser.getPrincipal());
-        if (!Objects.equals(book.getCreatedBy(), user.getId())) {
+        if (!Objects.equals(book.getOwner().getId(), user.getId())) {
             throw new OperationNotPermittedException("You cannot  return a book that you don't own");
         }
-        BookTransactionHistory bookTransactionHistory = bookTransactionHistoryRepository.findByBookIdAndOwnerId(book,user.getId())
+        BookTransactionHistory bookTransactionHistory = bookTransactionHistoryRepository.findByBookIdAndOwnerId(bookId,user.getId())
                 .orElseThrow(() -> new OperationNotPermittedException("The book isn't returned yet, you can't approve this return"));
         bookTransactionHistory.setReturnApproved(true);
         return bookTransactionHistoryRepository.save(bookTransactionHistory).getId();
