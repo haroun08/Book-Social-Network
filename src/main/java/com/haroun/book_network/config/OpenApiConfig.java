@@ -18,7 +18,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
                         url = "https://github.com/haroun08"
                 ),
                 description = "OpenApi documentation for Spring security",
-                title = "OpenApi Specification - Alibou ",
+                title = "OpenApi Specification - Haroun ",
                 version = "1.0",
                 license = @License(
                         name = "Licence name",

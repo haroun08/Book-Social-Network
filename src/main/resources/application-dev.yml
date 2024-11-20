@@ -49,3 +49,6 @@ logging:
       springframework:
         security:
           DEBUG
+        web:
+          multipart :
+            DEBUG
