@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Objects;
 
-import static com.haroun.book_network.book.BookSpecification.withOwnerId;
 
 @Service
 @RequiredArgsConstructor
@@ -29,8 +28,9 @@ public class BookService {
     private final BookTransactionHistoryRepository bookTransactionHistoryRepository;
     private final FileStorageService fileStorageService;
     public Integer save(BookRequest request, Authentication connectedUser) {
-
+        User user = ((User) connectedUser.getPrincipal());
         Book book = bookMapper.toBook(request);
+        book.setOwner(user);
         return bookRepository.save(book).getId();
     }
 
@@ -62,8 +62,11 @@ public class BookService {
 
 
     public PageResponse<BookResponse> findAllBooksByOwner(int page, int size, Authentication connectedUser) {
+        User user = ((User) connectedUser.getPrincipal());
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-        Page<Book> books = bookRepository.findAll(withOwnerId(Integer.valueOf(connectedUser.getName())), pageable);
+        Page<Book> books = bookRepository.findAll(BookSpecification.withOwnerId(user.getId()), pageable);
+
         List<BookResponse> booksResponse = books.stream()
                 .map(bookMapper::toBookResponse)
                 .toList();
